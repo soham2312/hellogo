@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
+	"fmt"
 	"github.com/google/uuid"
+	"github.com/soham2312/rsagg/internal/database"
+	"time"
 )
 
 func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {	
@@ -12,9 +16,9 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	decoder := json.NewDecoder(r.Body)
 
 	params := parameters{}
-	err := decoder.Decode(&name)
+	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error parsing json,%v",err))
+		resonsewitherror(w, 400, fmt.Sprintf("Error parsing json,%v",err))
 		return
 	}
 
@@ -25,10 +29,10 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		Name: params.Name,
 	})
 	if nil != err {
-		respondWithError(w, 400, fmt.Sprintf("Error creating user,%v",err))
+		resonsewitherror(w, 400, fmt.Sprintf("Error creating user,%v",err))
 		return
 	}
 
-	respondwithJSON(w, 200, user)
+	respondwithJSON(w, 200, databaseUserToUser(user))
 
 }

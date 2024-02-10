@@ -7,8 +7,9 @@ import ("fmt"
 "github.com/go-chi/chi"
 "github.com/go-chi/cors"
 "net/http"
-"github.com/lib/pq"
-"github.com/soham2312/hellogo/internal/database"
+"database/sql"
+_"github.com/lib/pq"
+"github.com/soham2312/rsagg/internal/database"
 )
 
 type apiConfig struct {
@@ -31,13 +32,8 @@ func main()  {
 		log.Fatal("Can't connect to the databse",err)
 	}
 
-	queries,err := database.New(conn)
-	if err != nil {
-		log.Fatal("Can't create connection to databse",err)
-	}
-
 	apiCfg := apiConfig{
-		DB: queries,
+		DB: database.New(conn),
 	}
 
 	router :=chi.NewRouter()
@@ -64,8 +60,5 @@ func main()  {
 		Addr: ":" + portString,
 	}
 	log.Printf("Server is running on port %v", portString)
-	err := srv.ListenAndServe()
-	if err != nil{
-		log.Fatal(err)
-	}
+	log.Fatal(srv.ListenAndServe())
 }
